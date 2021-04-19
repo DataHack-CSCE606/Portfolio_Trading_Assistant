@@ -39,6 +39,7 @@ INSTALLED_APPS = [
     'whitenoise.runserver_nostatic',  # < Per Whitenoise, to disable built in
     'django.contrib.staticfiles',
     'rest_framework',
+    'rest_framework_swagger',
     'backend.api',
 
     'django.contrib.sites',   # <--
@@ -151,13 +152,17 @@ STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 # http://whitenoise.evans.io/en/stable/django.html#make-sure-staticfiles-is-configured-correctly
 
 
+#ACCOUNT_SIGNUP_FORM_CLASS = 'backend.api.forms.SignupForm'
+
+ACCOUNT_EMAIL_VERIFICATION = 'none'
+
 AUTHENTICATION_BACKENDS = (
  'django.contrib.auth.backends.ModelBackend',
  'allauth.account.auth_backends.AuthenticationBackend',
  )
 
 SITE_ID = 1
-LOGIN_REDIRECT_URL = '/'
+LOGIN_REDIRECT_URL = '/accounts/profile'
 
 SOCIALACCOUNT_PROVIDERS = {
     'google': {
@@ -170,3 +175,6 @@ SOCIALACCOUNT_PROVIDERS = {
         }
     }
 }
+
+#clientid: 846932522788-f66q7fi5oqd8t869d0130cvtigi1f8nn.apps.googleusercontent.com
+#Secret key: 6N5vn9DxbdpQfmuh64bXdlzL
