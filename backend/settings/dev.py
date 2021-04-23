@@ -31,6 +31,7 @@ ALLOWED_HOSTS = ['*']
 # Application definition
 
 INSTALLED_APPS = [
+    'django_crontab',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -64,6 +65,8 @@ MIDDLEWARE = [
 
 ROOT_URLCONF = 'backend.urls'
 
+#print('============', BASE_DIR)
+#VUE_FOLDER = 'public'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
@@ -162,7 +165,9 @@ AUTHENTICATION_BACKENDS = (
  )
 
 SITE_ID = 1
-LOGIN_REDIRECT_URL = '/accounts/profile'
+#LOGIN_REDIRECT_URL = '/accounts/profile'
+LOGIN_REDIRECT_URL = 'http://127.0.0.1:8080/accounts/profile'
+LOGOUT_REDIRECT_URL = 'http://127.0.0.1:8080/api/index'
 
 SOCIALACCOUNT_PROVIDERS = {
     'google': {
@@ -178,3 +183,18 @@ SOCIALACCOUNT_PROVIDERS = {
 
 #clientid: 846932522788-f66q7fi5oqd8t869d0130cvtigi1f8nn.apps.googleusercontent.com
 #Secret key: 6N5vn9DxbdpQfmuh64bXdlzL
+
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+
+# Email Host setting
+EMAIL_USE_TLS = True
+
+EMAIL_HOST = 'smtp.gmail.com'
+EMAIL_HOST_USER = 'pancakeride1@gmail.com'
+EMAIL_HOST_PASSWORD = '1Wd@wS3Wa'
+EMAIL_PORT = 587
+
+
+CRONJOBS = [
+    ('*/1 * * * *', 'backend.api.cron.my_task', '>>./test.txt')
+]

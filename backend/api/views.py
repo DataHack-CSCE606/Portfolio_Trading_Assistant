@@ -4,7 +4,8 @@ from rest_framework import viewsets
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
-
+from django.core.mail import send_mail
+from django.conf import settings
 from .models import Message, MessageSerializer
 from .models import *
 
@@ -32,15 +33,25 @@ class UserProfileViewSet(viewsets.ModelViewSet):
     queryset = UserProfile.objects.all()
     serializer_class = UserProfileSerializer
 
+
 class UserViewSet(viewsets.ModelViewSet):
     queryset = User.objects.all()
     serializer_class = UserSerializer
 
+
 class UserList(APIView):
+    """
+    get:
+        return current user
+    """
     # 定义 GET 请求的方法，内部实现相同 @api_view
     def get(self, request):
+        #print('================= request ================\n', type(request))
+        #print('================= request ================\n', request.__dict__.keys())
+        #print('================= request user ================\n', request._user)
         user = request.user
         serializer = UserSerializer(user, many=False)
+        #return render(request, 'api/userlist.html', {'user': user})
         return Response(serializer.data, status=status.HTTP_200_OK)
 
     # 定义 POST 请求的方法
@@ -54,6 +65,13 @@ class UserList(APIView):
 @login_required
 def profile(request):
     user = request.user
+    print('================user email adrress: ', user.email)
+    print('================sender email adrress: ', settings.EMAIL_HOST_USER)
+    send_mail('EMAIL NOTIFICATION TEST',
+              'HI, this is an email notification test',
+              settings.EMAIL_HOST_USER,
+              [user.email, 'qf31@tamu.edu'],
+              fail_silently=False,)
 
 
     return render(request, 'account/profile.html', {'user': user})
