@@ -243,6 +243,17 @@ def add_new_stock(request): # pragma: no cover
         return HttpResponse("Adding failed!")
 
 
+
+import _thread
+# 为线程定义一个函数
+def t_send_email(address, name):
+    send_mail('Login notification', 
+             f'User {name} has logged in Portfolio Assistant',
+              settings.EMAIL_HOST_USER,
+              address,
+              fail_silently=False)
+
+
 def google_login(request): # pragma: no cover
     if request.method == "POST":
         try:
@@ -275,33 +286,50 @@ def google_login(request): # pragma: no cover
                 "locale": "en"
                 }
             '''
+            sell_notify = []
             try:
                 old_user = Userprofile.objects.get(user_id=user_id)
                 if old_user.login_notify > 0:
-                    send_mail('Login notification', 
-                        f'User {idinfo["name"]} has logged in',
-                        settings.EMAIL_HOST_USER,
-                        [idinfo["email"]],
-                        fail_silently=False,)
+                    _thread.start_new_thread(t_send_email, (idinfo["email"], idinfo["name"]))
+                tax_l = old_user.long_tax_rate
+                tax_s = old_user.short_tax_rate
+                opp_r = old_user.opportunity_cost
+                for s in old_user.stock.all():
+                    s_code = s.code
+                    yf_stock = yf.Ticker(s_code)
+                    purchase_date = s.purchase_date
+                    p0 = s.purchase_price 
+                    pl = s.target_price
+                    ps = yf_stock.history(period='1d')["Close"][0]
+                    hs = ((timezone.now() - purchase_date).days) / 365     # in year
+                    left_horizon = full_horizon - hs if (full_horizon - hs) > 0 else 0
+
+                    D = compute_D(tax_l, tax_s, pl, ps, p0, opp_r, left_horizon, hs)
+                    if D < 0:
+                        a_s = compute_return(ps, p0, tax_s, hs),
+                        a_l = compute_return(pl, p0, tax_l, left_horizon),
+                        sell_notify.append({
+                            "stock_code": s_code,
+                            "stock_name": s.name,
+                            "close_price": ps,
+                            "short_return": a_s,
+                            "long_return": a_l
+                        })
             
             except ObjectDoesNotExist as e:
                 new_user = Userprofile(user_id=user_id, 
                                        email_address=idinfo["email"], 
                                        user_name=idinfo["name"])
                 new_user.save()
-                send_mail('Login notification', 
-                          f'User {idinfo["name"]} has logged in Portfolio Assistant',
-                          settings.EMAIL_HOST_USER,
-                          [idinfo["email"]],
-                          fail_silently=False,)
+                _thread.start_new_thread(t_send_email, (idinfo["email"], idinfo["name"]))       
 
             request.session['user_id'] = user_id
             request.session['is_login'] = True
             request.session.set_expiry(20*60) # 20 minutes
             # state
-
             return JsonResponse({"user_id": user_id,
-                                 "state": True})
+                                 "state": True,
+                                 "sell": sell_notify})
         except:
             # Invalid token || Fail to send email
             # 失败原因，state。
