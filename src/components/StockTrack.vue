@@ -117,7 +117,6 @@ export default {
       }
     },
     handleDetails(index, row) {
-      console.log(index, row);
       let stock_code, user_id;
       stock_code = this.stockData[index].code;
       user_id = getStore("user").user_id;
@@ -161,7 +160,6 @@ export default {
       if (row.column.label === "Purchase Price ($)") {
         return "color: #389DFF; font-size: 16px; font-weight: bold";
       } else if (row.column.label === "Close Price ($)") {
-        // console.log(row);
         if (
           parseFloat(this.stockData[row.rowIndex]["close_price"]) >=
           parseFloat(this.stockData[row.rowIndex]["purchase_price"])

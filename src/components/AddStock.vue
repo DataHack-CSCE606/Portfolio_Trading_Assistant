@@ -141,7 +141,6 @@ export default {
           added_stocks,
         })
         .then((res) => {
-          console.log(res);
           this.loading = false;
           if (res.data == "Adding Succeeded!") {
             this.$message({
@@ -175,9 +174,7 @@ export default {
           header: true,
           complete(results) {
             // that.doc = JSON.stringify(results.data, null, 2);
-            // console.log(that.doc);
             that.doc = results.data;
-            console.log(that.doc);
           },
           error(errors) {
             this.$message({
