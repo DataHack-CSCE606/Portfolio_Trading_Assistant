@@ -61,7 +61,7 @@ your return from selling now is {}%. Therefore, we advise selling now.'.format(u
                                     settings.EMAIL_HOST_USER,
                                     [user.email],
                                     fail_silently=False,)
-                        s._sended = 1.0 # sended now
+                        s._sended = 1.0 
                     else:
                         s._sended = 0.0  
                     s.save()
@@ -69,7 +69,7 @@ your return from selling now is {}%. Therefore, we advise selling now.'.format(u
                 pass # No action
     except Exception as e:
         send_mail('SELL NOTIFICATION',
-                    f'{str(e)}',
-                    settings.EMAIL_HOST_USER,
-                    [user.email],
-                    fail_silently=False,)
+                  f'{str(e)}',
+                  settings.EMAIL_HOST_USER,
+                  [user.email],
+                  fail_silently=False,)
