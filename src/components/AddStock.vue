@@ -65,7 +65,7 @@
         <el-button type="primary" @click="Template()" style="float: left"
           >Template</el-button
         >
-        <el-button @click="dialogUploadVisible = false">Cancle</el-button>
+        <el-button @click="dialogUploadVisible = false">Cancel</el-button>
         <el-button type="primary" @click="Upload()">Confirm</el-button>
       </div>
     </el-dialog>
@@ -108,7 +108,7 @@
         </el-form>
       </el-form>
       <div slot="footer" class="dialog-footer">
-        <el-button @click="dialogAddVisible = false">Cancle</el-button>
+        <el-button @click="dialogAddVisible = false">Cancel</el-button>
         <el-button type="primary" @click="Add()">Confirm</el-button>
       </div>
     </el-dialog>
