@@ -72,7 +72,6 @@ export default {
         id: getStore("user").user_id,
       })
       .then((res) => {
-        // console.log(res);
         let data = [];
         for (let key in res.data.stocks) {
           var stock = res.data.stocks[key];

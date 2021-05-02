@@ -125,7 +125,6 @@ export default {
       .then((res) => {
         this.loading = false;
         // this.form = res.data;
-        console.log(res);
         this.form.name = getStore("user").name;
         this.form.email = getStore("user").email;
         this.form.short_tax_rate = res.data.short_tax_rate;

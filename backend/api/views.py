@@ -260,7 +260,7 @@ def t_send_email(address, name):
     send_mail('Login notification', 
              f'User {name} has logged in Portfolio Assistant',
               settings.EMAIL_HOST_USER,
-              address,
+              [address],
               fail_silently=False)
 
 def google_login(request): # pragma: no cover
