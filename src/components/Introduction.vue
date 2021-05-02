@@ -32,8 +32,8 @@ export default {
 </script>
 <style lang="sass" scoped>
 .para-container
-    width: 50%
-    // align-items: center
-    .para
-        font-size: 18px
+  width: 100%
+  // text-align: center
+.para
+  font-size: 18px
 </style>
