@@ -14,7 +14,7 @@ django_heroku = "*"
 yfinance = "*"
 google-oauth2-tool = "*"
 django-cors-headers = "*"
-apscheduler = "==3.0.0"
+apscheduler = "*"
 django-apscheduler = "*"
 pipfile = "*"
 
