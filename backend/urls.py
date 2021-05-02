@@ -38,7 +38,7 @@ urlpatterns = [
     
     path('profile/stock_detail/', stock_detail), #id, s_code
 
-    path('profile/check_stock', check_stock),
+    path('profile/check_stock/', check_stock),
     
     #path('/profile/<int:u_id>', get_profile),
     path('profile/', get_profile)

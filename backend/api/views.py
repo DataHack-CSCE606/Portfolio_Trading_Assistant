@@ -48,16 +48,29 @@ def get_profile(request):
         json_data = json.loads(data)
         u_id = json_data.get("id")
         user = Userprofile.objects.get(user_id=u_id)
+        tax_l = user.long_tax_rate
+        tax_s = user.short_tax_rate
+        opp_r = user.opportunity_cost
+        full_horizon = user.invest_horizon
         stocks = {}
+        #a_s = compute_return(ps, p0, tax_s, hs),
+        #a_l = compute_return(pl, p0, tax_l, left_horizon),
         for s in user.stocks.all():
             close_price =  yf.Ticker(s.code).history(period='1d')["Close"][0]
+            purchase_date = s.purchase_date
+            p0 = s.purchase_price 
+            pl = s.target_price
+            hs = ((timezone.now() - purchase_date).days) / 365
+            left_horizon = full_horizon - hs if (full_horizon - hs) > 0 else 0
+            D = compute_D(tax_l, tax_s, pl, close_price, p0, opp_r, left_horizon, hs)
             stocks[s.code] = {
                 "code": s.code,
                 "close_price": close_price,
-                "purchase_price": s.purchase_price,
+                "purchase_price": p0,
                 "purchase_date": s.purchase_date.isoformat()[:10],
-                "target_price": s.target_price,
-                "expect_return_rate": s.expect_return_rate
+                "target_price": pl,
+                "expect_return_rate": s.expect_return_rate,
+                "advice": True if D < 0 else False
             }
         
         user_profile = {
@@ -132,45 +145,6 @@ def compute_D(tL, tS, pL, pS, p0, r, hL, hS):
 
 def compute_return(ps, p0, t, h):
     return ((1 - t) * ps / p0 + t) ** (1/h) - 1
-
-def check_stock(request):
-    try:
-        if request.method == 'POST':
-            data = request.body.decode("utf-8")
-            json_data = json.loads(data)
-        else:
-            raise Exception()
-        sell_notify = []
-        u_id = json_data.get("id")
-        user = Userprofile.objects.get(user_id=u_id)
-        tax_l = user.long_tax_rate
-        tax_s = user.short_tax_rate
-        opp_r = user.opportunity_cost
-        for s in user.stock.all():
-            s_code = s.code
-            yf_stock = yf.Ticker(s_code)
-            purchase_date = s.purchase_date
-            p0 = s.purchase_price 
-            pl = s.target_price
-            ps = yf_stock.history(period='1d')["Close"][0]
-            hs = ((timezone.now() - purchase_date).days) / 365     # in year
-            left_horizon = full_horizon - hs if (full_horizon - hs) > 0 else 0
-
-            D = compute_D(tax_l, tax_s, pl, ps, p0, opp_r, left_horizon, hs)
-            if D < 0:
-                a_s = compute_return(ps, p0, tax_s, hs),
-                a_l = compute_return(pl, p0, tax_l, left_horizon),
-                sell_notify.append({
-                    "stock_code": s_code,
-                    "stock_name": s.name,
-                    "close_price": ps,
-                    "short_return": a_s,
-                    "long_return": a_l
-                })
-        
-        return JsonResponse({"sell": sell_notify})
-    except ObjectDoesNotExist as e:
-        return HttpResponse("No such user")
 
 def stock_detail(request): # pragma: no cover
     
