@@ -10,11 +10,16 @@ from .models import Message, MessageSerializer
 from .models import Userprofile, Stock
 
 from django.shortcuts import *
-from .views import compute_D
+from .views import compute_D, compute_return
 from django.http import HttpResponseRedirect
 from django.urls import reverse
 from django.utils import timezone
+from datetime import datetime, timedelta
 import yfinance as yf
+
+
+
+
 
 def my_task():
     '''
@@ -43,16 +48,22 @@ def my_task():
                     D = compute_D(tax_l, tax_s, pl, ps, p0, opp_r, left_horizon, hs)
                     if D < 0:
                         if s._sended < 1.:
-                            send_mail('SELL NOTIFICATION',
-                                    f'Time to sell {s.name}',
+                            expect_date = purchase_date + timedelta(days=user.invest_horizon*365//1)
+                            a_s = compute_return(ps, p0, tax_s, hs)
+                            a_l = compute_return(pl, p0, tax_l, left_horizon)
+                            mail_tempelate = 'Dear user {}:\n   Your stock {} has reached a price of {:.2f}.The return from holding the security until {}, \
+assuming it reached a price target of {:.2f}, would be {:.2%}. At the recent market price of {:.2f}, if you sell and invest the proceeds at your expected rate of return {:.2f}, \
+your return from selling now is {:.2%}. Therefore, we advise selling now.'.format(user.user_name, s.name, ps, purchase_date.isoformat()[:10], pl, a_l, ps, s.expect_return_rate, a_s)
+                            send_mail('Time to sell.',
+                                    mail_tempelate,
                                     settings.EMAIL_HOST_USER,
                                     [user.email_address],
                                     fail_silently=False,)
-                        s._sended = 1.0 # sended now
+                        s._sended = 1.0 
                     else:
                         s._sended = 0.0  
                     s.save()
             else:
                 pass # No action
     except Exception as e:
-        pass
+        print(str(e))

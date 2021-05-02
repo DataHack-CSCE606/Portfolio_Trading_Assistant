@@ -151,7 +151,8 @@ export default {
             this.$router.push("/home/stocktrack/");
           } else {
             this.$message({
-              message: "something wrong when trying to add the stock...",
+              message:
+                "something wrong ... Maybe you are trying to add existing stocks",
               type: "error",
             });
           }

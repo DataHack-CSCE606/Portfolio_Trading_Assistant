@@ -12,19 +12,14 @@
       <el-table-column prop="code" label="Code"></el-table-column>
       <el-table-column prop="purchase_date" label="Purchase Date" sortable>
       </el-table-column>
-      <el-table-column prop="close_price" label="Close Price ($)" sortable>
+      <el-table-column prop="close_price" label="Close Price ($)">
       </el-table-column>
-      <el-table-column
-        prop="purchase_price"
-        label="Purchase Price ($)"
-        sortable
-      >
+      <el-table-column prop="purchase_price" label="Purchase Price ($)">
       </el-table-column>
       <el-table-column
         prop="target_price"
         label="Target Price ($)"
         class="target_price"
-        sortable
       >
       </el-table-column>
       <el-table-column prop="advice" label="Advice"> </el-table-column>
@@ -86,9 +81,9 @@ export default {
           stock["purchase_price"] = stock["purchase_price"].toFixed(2);
           stock["target_price"] = stock["target_price"].toFixed(2);
           if (stock["advice"]) {
-            stock["advice"] = "sell";
+            stock["advice"] = "Sell";
           } else {
-            stock["advice"] = "keep";
+            stock["advice"] = "Keep";
           }
           data.push(stock);
         }
@@ -179,6 +174,12 @@ export default {
         return "font-size:16px";
       } else if (row.column.label === "Name") {
         return "font-size:16px";
+      } else if (row.column.label === "Advice") {
+        if (this.stockData[row.rowIndex]["advice"] == "Sell") {
+          return "font-size:16px; color: green";
+        } else {
+          return "font-size:16px; color: #389DFF";
+        }
       } else return "font-size:16px";
     },
   },
