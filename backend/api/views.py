@@ -146,7 +146,8 @@ def check_stock(request):
         tax_l = user.long_tax_rate
         tax_s = user.short_tax_rate
         opp_r = user.opportunity_cost
-        for s in user.stock.all():
+        full_horizon = user.invest_horizon
+        for s in user.stocks.all():
             s_code = s.code
             yf_stock = yf.Ticker(s_code)
             purchase_date = s.purchase_date
@@ -171,6 +172,8 @@ def check_stock(request):
         return JsonResponse({"sell": sell_notify})
     except ObjectDoesNotExist as e:
         return HttpResponse("No such user")
+    except Exception as e:
+        return HttpResponse("Other errors")
 
 def stock_detail(request): # pragma: no cover
     

@@ -27,12 +27,7 @@
         sortable
       >
       </el-table-column>
-      <el-table-column
-        prop="expect_return_rate"
-        label="Expect Return Rate"
-        sortable
-      >
-      </el-table-column>
+      <el-table-column prop="advice" label="Advice"> </el-table-column>
       <el-table-column label="Action">
         <template slot-scope="scope">
           <el-button
@@ -75,9 +70,8 @@ export default {
       loading: true,
     };
   },
-  created() {},
   inject: ["reload"],
-  mounted() {
+  created() {
     axios
       .post("/profile/", {
         id: getStore("user").user_id,
@@ -91,6 +85,11 @@ export default {
           stock["close_price"] = stock["close_price"].toFixed(2);
           stock["purchase_price"] = stock["purchase_price"].toFixed(2);
           stock["target_price"] = stock["target_price"].toFixed(2);
+          if (stock["advice"]) {
+            stock["advice"] = "sell";
+          } else {
+            stock["advice"] = "keep";
+          }
           data.push(stock);
         }
         this.stockData = data;
