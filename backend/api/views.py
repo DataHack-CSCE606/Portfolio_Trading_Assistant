@@ -12,6 +12,7 @@ import json
 import _thread
 from datetime import datetime as pydate
 import datetime
+from datetime import timedelta
 from django.conf import settings
 from .models import Message, MessageSerializer
 #from .models import Userprofile, Stock
